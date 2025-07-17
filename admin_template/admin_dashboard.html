@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5b6dfa;
+            --primary-dark: #3a4cb8;
+            --sidebar-bg: linear-gradient(180deg, #6a82fb 0%, #fc5c7d 100%);
+            --sidebar-width: 230px;
+            --card-bg: #fff;
+            --card-radius: 14px;
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --summary-gradient: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+            --success: #27ae60;
+            --warning: #f1c40f;
+            --info: #2980b9;
+            --danger: #e67e22;
+            --muted: #888;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6fb;
+            color: #222;
+        }
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+        }
+        .sidebar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 32px 0 24px 0;
+            text-align: center;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 24px;
+        }
+        .sidebar nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 16px 32px;
+            font-size: 1.08rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .sidebar nav a.active, .sidebar nav a:hover {
+            background: rgba(255,255,255,0.08);
+            border-left: 4px solid #fff;
+        }
+        .sidebar .logout {
+            margin: 24px 0 0 0;
+            padding: 16px 32px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.08rem;
+        }
+        .main {
+            flex: 1;
+            padding: 36px 36px 24px 36px;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .main-header .title {
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .main-header .title i {
+            color: var(--primary);
+        }
+        .main-header .date {
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin-top: 6px;
+        }
+        .summary-row {
+            display: flex;
+            gap: 24px;
+            margin: 32px 0 24px 0;
+            flex-wrap: wrap;
+        }
+        .summary-card {
+            background: var(--summary-gradient);
+            color: #fff;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            padding: 24px 32px;
+            min-width: 200px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-size: 1.1rem;
+            position: relative;
+        }
+        .summary-card i {
+            font-size: 2.2rem;
+            opacity: 0.85;
+        }
+        .summary-card .summary-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .summary-card .summary-value {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .summary-card.revenue {
+            background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+        }
+        .dashboard-content {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .dashboard-main {
+            flex: 2;
+            min-width: 340px;
+        }
+        .dashboard-side {
+            flex: 1;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            padding: 20px 24px;
+            margin-bottom: 0;
+        }
+        .card h3 {
+            margin: 0 0 16px 0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .orders-table th, .orders-table td {
+            padding: 10px 8px;
+            text-align: left;
+        }
+        .orders-table th {
+            background: #f4f6fb;
+            font-weight: 600;
+        }
+        .orders-table tr {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .orders-table tr:last-child {
+            border-bottom: none;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #222; 
+            background: #fbbf24;
+        }
+        .badge.completed { background: var(--success); }
+        .badge.processing { background: var(--warning); color: #222; }
+        .badge.shipped { background: var(--info); }
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .quick-actions a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 0;
+            border-radius: 8px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .quick-actions .add { background: #2563eb; color: #fff; }
+        .quick-actions .orders { background: #16a34a; color: #fff; }
+        .quick-actions .users { background: #2563eb; color: #fff; }
+        .quick-actions .reviews { background: #fbbf24; color: #222; }
+        .quick-actions .add:hover { background: #1d4ed8; }
+        .quick-actions .orders:hover { background: #15803d; }
+        .quick-actions .users:hover { background: #1d4ed8; }
+        .quick-actions .reviews:hover { background: #f59e42; }
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .review-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 14px 16px;
+        }
+        .review-card .stars {
+            color: #fbbf24;
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+        }
+        .review-card .review-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .review-card .review-text {
+            color: #444;
+            font-size: 0.98rem;
+        }
+        .review-card .review-author {
+            color: #888;
+            font-size: 0.93rem;
+            margin-top: 4px;
+        }
+        @media (max-width: 900px) {
+            .main { padding: 18px 4vw 18px 4vw; }
+            .summary-row { gap: 12px; }
+            .dashboard-content { flex-direction: column; gap: 18px; }
+        }
+        @media (max-width: 600px) {
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; height: auto; overflow-x: auto; }
+            .sidebar nav { flex-direction: row; overflow-x: auto; }
+            .sidebar nav a, .sidebar .logout { padding: 12px 10px; font-size: 1rem; }
+            .main { padding: 8px 1vw 8px 1vw; }
+            .container, .dashboard-container { padding: 10px 2vw; max-width: 100%; width: 100%; }
+            h2 { font-size: 1.2rem; }
+            .summary-row { flex-direction: column; gap: 8px; }
+            .dashboard-content { flex-direction: column; gap: 12px; }
+            .dashboard-side { min-width: 0; }
+        }
+        .fade-in {
+          animation: fadeIn 0.8s cubic-bezier(.4,2,.6,1);
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: none; }
+        }
+        .card, .summary-card, .dashboard-main, .dashboard-side, .container {
+          transition: box-shadow 0.25s cubic-bezier(.4,2,.6,1), transform 0.18s cubic-bezier(.4,2,.6,1);
+        }
+        .card:hover, .summary-card:hover {
+          box-shadow: 0 8px 32px rgba(90,120,255,0.18);
+          transform: translateY(-2px) scale(1.02);
+        }
+        .sidebar nav a {
+          transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+        }
+        .sidebar nav a:hover {
+          transform: translateX(4px) scale(1.04);
+        }
+        button, .btn, .edit-btn, .delete-btn, .quick-actions a {
+          transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
+        }
+        button:hover, .btn:hover, .edit-btn:hover, .delete-btn:hover, .quick-actions a:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 16px rgba(90,120,255,0.13);
+        }
+        .orders-table tr, .reviews-table tr {
+          transition: background 0.18s, box-shadow 0.18s;
+        }
+        .orders-table tr:hover, .reviews-table tr:hover {
+          background: #eaf0ff;
+          box-shadow: 0 2px 12px rgba(90,120,255,0.10);
+        }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="logo"><i class="fas fa-crown"></i> Admin Panel</div>
+        <nav>
+            <a href="/" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/admin/dresses"><i class="fas fa-tshirt"></i> Dresses</a>
+            <a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+            <a href="/admin/users"><i class="fas fa-users"></i> Users</a>
+            <a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a>
+        </nav>
+        <a href="/logout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </aside>
+    <main class="main">
+        <div class="main-header">
+            <div class="title"><i class="fas fa-clock"></i> Dashboard</div>
+            <div class="date">{{ date or 'Sunday, July 13, 2025' }}</div>
+        </div>
+        <div class="summary-row">
+            <div class="summary-card"><i class="fas fa-tshirt"></i><div><div class="summary-label">Total Dresses</div><div class="summary-value">{{ dresses }}</div></div></div>
+            <div class="summary-card"><i class="fas fa-shopping-cart"></i><div><div class="summary-label">Active Orders</div><div class="summary-value">{{ orders }}</div></div></div>
+            <div class="summary-card"><i class="fas fa-users"></i><div><div class="summary-label">Total Users</div><div class="summary-value">{{ users }}</div></div></div>
+            <div class="summary-card revenue"><i class="fas fa-rupee-sign"></i><div><div class="summary-label">Revenue</div><div class="summary-value">₹{{ revenue or '85K' }}</div></div></div>
+        </div>
+        <div class="dashboard-content">
+            <div class="dashboard-main">
+                <div class="card">
+                    <h3><i class="fas fa-clock"></i> Recent Orders</h3>
+                    <table class="orders-table">
+                        <tr><th>Order ID</th><th>Customer</th><th>Dress</th><th>Amount</th><th>Status</th></tr>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>{{ order.order_id }}</td>
+                            <td>{{ order.customer }}</td>
+                            <td>{{ order.dress }}</td>
+                            <td>{{ order.amount }}</td>
+                            <td><span class="badge {{ order.status|lower }}">{{ order.status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td>#ORD001</td><td>John Doe</td><td>Elegant Evening Dress</td><td>₹2,500</td><td><span class="badge completed">Completed</span></td></tr>
+                        <tr><td>#ORD002</td><td>Jane Smith</td><td>Casual Summer Dress</td><td>₹1,800</td><td><span class="badge processing">Processing</span></td></tr>
+                        <tr><td>#ORD003</td><td>Mike Johnson</td><td>Wedding Dress</td><td>₹5,000</td><td><span class="badge shipped">Shipped</span></td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="card" style="margin-top:18px;">
+                    <h3><i class="fas fa-star"></i> Recent Reviews</h3>
+                    <div class="reviews-list">
+                        {% for review in recent_reviews %}
+                        <div class="review-card">
+                            <div class="stars">{% for i in range(1, 6) %}<i class="fa{% if i <= review.rating %}s{% else %}r{% endif %} fa-star"></i>{% endfor %} <span>{{ review.rating }}</span></div>
+                            <div class="review-title">{{ review.title }}</div>
+                            <div class="review-text">{{ review.text }}</div>
+                            <div class="review-author">- {{ review.author }}</div>
+                        </div>
+                        {% else %}
+                        <div class="review-card"><div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> <span>5.0</span></div><div class="review-title">Amazing quality!</div><div class="review-text">"The dress exceeded my expectations. Perfect fit and beautiful design."</div><div class="review-author">- Sarah Wilson</div></div>
+                        <div class="review-card"><div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> <span>4.0</span></div><div class="review-title">Great service</div><div class="review-text">"Fast delivery and excellent customer service. Highly recommended!"</div><div class="review-author">- David Brown</div></div>
+                        <div class="review-card"><div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> <span>5.0</span></div><div class="review-title">Perfect for the occasion</div><div class="review-text">"Wore this to my friend's wedding and received so many compliments!"</div><div class="review-author">- Emily Davis</div></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-side">
+                <div class="card">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    <div class="quick-actions">
+                        <a href="/admin/dress/add" class="add"><i class="fas fa-plus"></i> Add New Dress</a>
+                        <a href="/admin/orders" class="orders"><i class="fas fa-eye"></i> View All Orders</a>
+                        <a href="/admin/users" class="users"><i class="fas fa-users"></i> Manage Users</a>
+                        <a href="/admin/reviews" class="reviews"><i class="fas fa-star"></i> View Reviews</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

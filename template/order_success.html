@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Textiles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .status-pending {
+            color: #ff9800;
+            font-weight: bold;
+            background: rgba(255, 152, 0, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #ff9800;
+        }
+        
+        .detail-section {
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .detail-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .detail-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="order-success-container fade-in">
+       
+        <div class="back-button-container">
+            <a href="{{ url_for('index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <div class="success-header">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1>Order Confirmed!</h1>
+            <p>Your order has been successfully placed. We'll process it right away!</p>
+        </div>
+
+        <div class="order-details">
+            <div class="detail-section slide-up">
+                <h3><i class="fas fa-tshirt"></i> Product Details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Product Name:</span>
+                    <span class="detail-value">{{ order.dress_details.dress_type or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Material:</span>
+                    <span class="detail-value">{{ order.dress_details.dress_design or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Image:</span>
+                    <span class="detail-value"><img src="{{ order.dress_details.image_url }}" alt="Dress Image" width="120"></span>
+                </div>
+            </div>
+            
+            <div class="detail-section slide-up">
+                <h3><i class="fas fa-cog"></i> Customization Details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Order ID:</span>
+                    <span class="detail-value">{{ order._id }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Color:</span>
+                    <span class="detail-value">{{ order.dress_details.color or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Gender:</span>
+                    <span class="detail-value">{{ order.dress_details.gender or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Dress Type:</span>
+                    <span class="detail-value">{{ order.dress_details.dress_type or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Dress Design:</span>
+                    <span class="detail-value">{{ order.dress_details.dress_design or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Size:</span>
+                    <span class="detail-value">{{ order.dress_details.size or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Quantity:</span>
+                    <span class="detail-value">{{ order.dress_details.quantity or '1' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Total Price:</span>
+                    <span class="detail-value">₹{{ order.dress_details.price or 'N/A' }}</span>
+                </div>
+            </div>
+
+            <div class="detail-section slide-up">
+                <h3><i class="fas fa-shipping-fast"></i> Order Status</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value status-pending">{{ order.status or 'Pending' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Order Date:</span>
+                    <span class="detail-value">{{ order.order_date.strftime('%B %d, %Y at %I:%M %p') if order.order_date else 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Estimated Delivery:</span>
+                    <span class="detail-value">5-7 business days</span>
+                </div>
+            </div>
+
+            <div class="detail-section slide-up">
+                <h3><i class="fas fa-user"></i> Customer Details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Name:</span>
+                    <span class="detail-value">{{ order.user_details.username or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ order.user_details.email or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Phone:</span>
+                    <span class="detail-value">{{ order.user_details.contact or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Street:</span>
+                    <span class="detail-value">{{ order.user_details.address.street or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">City:</span>
+                    <span class="detail-value">{{ order.user_details.address.city or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">State:</span>
+                    <span class="detail-value">{{ order.user_details.address.state or 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">ZIP Code:</span>
+                    <span class="detail-value">{{ order.user_details.address.zip or 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center" style="text-align: center; margin-top: 2rem;">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <i class="fas fa-home"></i> Return to Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            const detailSections = document.querySelectorAll('.detail-section');
+            
+            
+            detailSections.forEach((section, index) => {
+                section.style.animationDelay = `${index * 0.1}s`;
+            });
+
+           
+            detailSections.forEach(section => {
+                section.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)';
+                });
+
+                section.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

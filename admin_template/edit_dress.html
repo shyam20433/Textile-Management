@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Dress - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a82fb;
+            --secondary: #fc5c7d;
+            --accent: #39ff14;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #6a82fb 0%, #fc5c7d 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .sidebar .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .sidebar nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+            margin: 2px 0;
+        }
+
+        .sidebar nav a.active, .sidebar nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #fff;
+        }
+
+        .sidebar .logout {
+            color: #fff;
+            text-decoration: none;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.2s;
+        }
+
+        .sidebar .logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .edit-dress-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: #3a4cb8;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2 i {
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #3a4cb8;
+            font-size: 1.1rem;
+        }
+
+        .input-icon {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-icon-addon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #6a82fb 0%, #fc5c7d 100%);
+            color: #fff;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 2px 8px rgba(106,130,251,0.10);
+            z-index: 2;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .input-icon input,
+        .input-icon select,
+        .input-icon textarea {
+            padding-left: 54px !important;
+        }
+
+        .input-icon input:focus ~ .input-icon-addon,
+        .input-icon select:focus ~ .input-icon-addon,
+        .input-icon textarea:focus ~ .input-icon-addon {
+            background: linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%);
+            color: #fff;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.2s, box-shadow 0.2s;
+            margin-left: 0;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #6a82fb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 130, 251, 0.2);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            padding: 15px;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            padding-right: 40px;
+        }
+
+        .file-upload {
+            margin-top: 10px;
+        }
+
+        .file-upload-label {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #f0f2f5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .file-upload-label:hover {
+            background: #e0e4e9;
+        }
+
+        .file-upload-label i {
+            margin-right: 8px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .current-image {
+            margin-top: 15px;
+            max-width: 200px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 992px) {
+            .edit-dress-container {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0;
+            }
+            
+            .sidebar .logo {
+                padding: 15px;
+                font-size: 1.5rem;
+                border-bottom: none;
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .sidebar nav {
+                flex-direction: row;
+                padding: 0;
+            }
+            
+            .sidebar nav a {
+                padding: 15px 20px;
+                white-space: nowrap;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+            }
+            
+            .sidebar nav a.active, 
+            .sidebar nav a:hover {
+                border-left: none;
+                border-bottom: 4px solid #fff;
+            }
+            
+            .sidebar .logout {
+                padding: 15px 20px;
+                border-top: none;
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            .edit-dress-container {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            input[type="text"],
+            input[type="number"],
+            textarea,
+            select {
+                padding: 12px 12px 12px 40px;
+            }
+            
+            .input-icon-addon {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+                left: 8px;
+            }
+            .input-icon input,
+            .input-icon select,
+            .input-icon textarea {
+                padding-left: 44px !important;
+            }
+            
+            .submit-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            .edit-dress-container {
+                padding: 10px;
+            }
+            .current-image {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; height: auto; overflow-x: auto; }
+            .sidebar nav { flex-direction: row; overflow-x: auto; }
+            .sidebar nav a, .sidebar .logout { padding: 12px 10px; font-size: 1rem; }
+            main { padding: 8px 1vw 8px 1vw; }
+            .edit-dress-container { padding: 10px 2vw; max-width: 100%; width: 100%; }
+            h2 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-crown"></i> Admin Panel
+        </div>
+        <nav>
+            <a href="/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/admin/dresses" class="active"><i class="fas fa-tshirt"></i> Dresses</a>
+            <a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+            <a href="/admin/users"><i class="fas fa-users"></i> Users</a>
+            <a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a>
+        </nav>
+        <a href="/logout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </aside>
+    <main>
+        <div class="edit-dress-container">
+            <h2><i class="fas fa-edit"></i> Edit Dress</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group input-icon">
+                    <label for="name">Dress Name</label>
+                    <span class="input-icon-addon"><i class="fas fa-tshirt"></i></span>
+                    <input type="text" id="name" name="name" value="black cotton" required>
+                </div>
+                
+                <div class="form-group input-icon">
+                    <label for="color">Color</label>
+                    <span class="input-icon-addon"><i class="fas fa-palette"></i></span>
+                    <input type="text" id="color" name="color" value="black" required>
+                </div>
+                
+                <div class="form-group input-icon">
+                    <label for="price">Price (₹)</label>
+                    <span class="input-icon-addon"><i class="fas fa-rupee-sign"></i></span>
+                    <input type="number" id="price" name="price" value="70" required step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required>A dark black cloth for shirts and pants.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="type">Dress Type</label>
+                    <select id="type" name="type" required>
+                        <option value="Cotton" selected>Cotton</option>
+                        <option value="Silk">Silk</option>
+                        <option value="Linen">Linen</option>
+                        <option value="Wool">Wool</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Current Image</label>
+                    <img src="{{ dress.image_url }}" alt="Current dress image" class="current-image">
+                </div>
+                
+                <div class="form-group">
+                    <label>Upload New Image</label>
+                    <label for="image" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i> Choose File
+                    </label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </main>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('image');
+    const currentImage = document.querySelector('.current-image');
+    if (imageInput && currentImage) {
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Orders</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: #f4f6fb;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 230px;
+            background: linear-gradient(180deg, #6a82fb 0%, #fc5c7d 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+        }
+        .sidebar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 32px 0 24px 0;
+            text-align: center;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 24px;
+        }
+        .sidebar nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 16px 32px;
+            font-size: 1.08rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .sidebar nav a.active, .sidebar nav a:hover {
+            background: rgba(255,255,255,0.08);
+            border-left: 4px solid #fff;
+        }
+        .sidebar .logout {
+            margin: 24px 0 0 0;
+            padding: 16px 32px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.08rem;
+        }
+        main {
+            flex: 1;
+            padding: 36px 36px 24px 36px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 32px 24px 24px 24px;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #3a4cb8;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .summary-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .summary-card {
+            background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+            color: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(90, 120, 255, 0.10);
+            padding: 18px 28px;
+            min-width: 160px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .summary-card .summary-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .summary-card .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .orders-table th, .orders-table td {
+            padding: 12px 8px;
+            text-align: left;
+        }
+        .orders-table th {
+            background: #f4f6fb;
+            font-weight: 600;
+        }
+        .orders-table tr {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .orders-table tr:last-child {
+            border-bottom: none;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #222;
+            background: #fbbf24;
+        }
+        .badge.pending { background: #fbbf24; color: #222; }
+        .badge.dispatched { background: #2563eb; color: #fff; }
+        .badge.delivered { background: #27ae60; color: #fff; }
+        .badge.other { background: #888; color: #fff; }
+        .update-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .update-form select, .update-form input[type="submit"] {
+            padding: 7px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+        }
+        .update-form input[type="submit"] {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .update-form input[type="submit"]:hover {
+            background: #1d4ed8;
+        }
+        .order-product-row td {
+          background: #f9f9fc;
+          padding: 20px 16px;
+          border-top: 2px solid #e9ecef;
+        }
+        
+        .detail-section {
+          margin: 8px 0;
+          padding: 12px;
+          border-radius: 8px;
+          border-left: 4px solid;
+        }
+        
+        .detail-section.basic {
+          background: rgba(106, 130, 251, 0.05);
+          border-left-color: #6a82fb;
+        }
+        
+        .detail-section.customization {
+          background: rgba(252, 92, 125, 0.05);
+          border-left-color: #fc5c7d;
+        }
+        
+        .detail-section.total {
+          background: rgba(39, 174, 96, 0.1);
+          border-left-color: #27ae60;
+        }
+        .product-details {
+          display: flex;
+          align-items: flex-start;
+          gap: 18px;
+          padding: 16px;
+          background: #fafbfc;
+          border-radius: 12px;
+          border: 1px solid #e9ecef;
+        }
+        .product-thumb {
+          width: 60px;
+          height: 60px;
+          object-fit: cover;
+          border-radius: 8px;
+          border: 1px solid #eee;
+          background: #f8f9fa;
+        }
+        
+        .product-thumb[src*="default"] {
+          background: #e9ecef;
+          border: 2px dashed #dee2e6;
+        }
+        .fade-in {
+          animation: fadeIn 0.8s cubic-bezier(.4,2,.6,1);
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: none; }
+        }
+        .container {
+          transition: box-shadow 0.25s cubic-bezier(.4,2,.6,1), transform 0.18s cubic-bezier(.4,2,.6,1);
+        }
+        .container:hover {
+          box-shadow: 0 8px 32px rgba(90,120,255,0.18);
+          transform: translateY(-2px) scale(1.02);
+        }
+        .sidebar nav a {
+          transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+        }
+        .sidebar nav a:hover {
+          transform: translateX(4px) scale(1.04);
+        }
+        .edit-btn, .delete-btn, .update-btn {
+          transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
+        }
+        .edit-btn:hover, .delete-btn:hover, .update-btn:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 16px rgba(90,120,255,0.13);
+        }
+        .orders-table tr {
+          transition: background 0.18s, box-shadow 0.18s;
+        }
+        .orders-table tr:hover {
+          background: #eaf0ff;
+          box-shadow: 0 2px 12px rgba(90,120,255,0.10);
+        }
+        @media (max-width: 900px) {
+            main { padding: 12px 2vw 12px 2vw; }
+            h2 { font-size: 1.3rem; }
+        }
+        @media (max-width: 600px) {
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; height: auto; overflow-x: auto; }
+            .sidebar nav { flex-direction: row; overflow-x: auto; }
+            .sidebar nav a, .sidebar .logout { padding: 12px 10px; font-size: 1rem; }
+            main { padding: 8px 1vw 8px 1vw; }
+            .container { padding: 10px 2vw; max-width: 100%; width: 100%; }
+            .orders-table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; }
+            h2 { font-size: 1.2rem; }
+            .orders-table, thead, tbody, th, td, tr { display: block; width: 100%; }
+            .orders-table tr { margin-bottom: 12px; border-bottom: 2px solid #eee; }
+            .orders-table th, .orders-table td { padding: 10px 5px; font-size: 1rem; text-align: left; }
+            .update-form { flex-direction: column; gap: 6px; align-items: stretch; }
+        }
+        
+       
+        .product-thumb.error {
+          background: #f8d7da;
+          border: 2px dashed #dc3545;
+          position: relative;
+        }
+        
+        .product-thumb.error::after {
+          content: '⚠️';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 20px;
+        }
+    </style>
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.product-thumb');
+            images.forEach(function(img) {
+                img.addEventListener('error', function() {
+                    this.src = '/static/dress/black bh.jpg';
+                    this.classList.add('error');
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="logo"><i class="fas fa-crown"></i> Admin Panel</div>
+        <nav>
+            <a href="/" ><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/admin/dresses"><i class="fas fa-tshirt"></i> Dresses</a>
+            <a href="/admin/orders" class="active"><i class="fas fa-shopping-cart"></i> Orders</a>
+            <a href="/admin/users"><i class="fas fa-users"></i> Users</a>
+            <a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a>
+        </nav>
+        <a href="/logout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </aside>
+    <main>
+        <div class="container fade-in">
+            <h2><i class="fas fa-clipboard-list"></i> Manage Orders</h2>
+            <div class="summary-row">
+                <div class="summary-card"><div class="summary-label">Total Orders</div><div class="summary-value">{{ stats.total }}</div></div>
+                <div class="summary-card"><div class="summary-label">Pending</div><div class="summary-value">{{ stats.pending }}</div></div>
+                <div class="summary-card"><div class="summary-label">Dispatched</div><div class="summary-value">{{ stats.dispatched }}</div></div>
+                <div class="summary-card"><div class="summary-label">Delivered</div><div class="summary-value">{{ stats.delivered }}</div></div>
+            </div>
+            <table class="orders-table">
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Order Date</th>
+                    <th>Update</th>
+                </tr>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.user_details.username or 'N/A' if order.user_details else 'N/A' }}</td>
+                    <td>{{ order.user_details.email or 'N/A' if order.user_details else 'N/A' }}</td>
+                    <td>{{ order.user_details.contact or 'N/A' if order.user_details else 'N/A' }}</td>
+                    <td>
+                        {% if order.user_details and order.user_details.address %}
+                            {{ order.user_details.address.street or '' }}, {{ order.user_details.address.city or '' }}, {{ order.user_details.address.state or '' }} - {{ order.user_details.address.zip or '' }}
+                        {% else %}
+                            No address available
+                        {% endif %}
+                    </td>
+                    <td><span class="badge {{ order.status|lower if order.status else 'other' }}">{{ order.status or 'Unknown' }}</span></td>
+                    <td>{{ order.order_date.strftime('%b %d, %Y — %I:%M %p') if order.order_date else 'N/A' }}</td>
+                    <td>
+                        <form class="update-form" method="POST" action="/admin/order/update/{{ order._id }}">
+                            <select name="status">
+                                <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Dispatched" {% if order.status == 'Dispatched' %}selected{% endif %}>Dispatched</option>
+                                <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                            </select>
+                            <input type="submit" value="Update">
+                        </form>
+                    </td>
+                </tr>
+                <tr class="order-product-row">
+                    <td colspan="7">
+                        {% if order.dress_details %}
+                        <div class="product-details">
+                            <img src="{{ order.dress_details.image_url.replace('\\', '/') if order.dress_details.image_url else '/static/dress/black bh.jpg' }}" class="product-thumb" alt="Product Image">
+                            <div style="flex: 1;">
+                                
+                                {% if order.dress_details.name %}
+                                  <strong style="font-size:1.2em; color: #3a4cb8;">{{ order.dress_details.name }}</strong><br>
+                                {% else %}
+                                  <strong style="font-size:1.2em; color: #3a4cb8;">{{ order.dress_details.dress_type or 'N/A' }}</strong><br>
+                                {% endif %}
+                                
+                                
+                                <div class="detail-section basic">
+                                    <strong style="color: #3a4cb8;">Basic Details:</strong><br>
+                                    Color: <span style="font-weight: 600;">{{ order.dress_details.color if order.dress_details and order.dress_details.color else 'N/A' }}</span> &nbsp;|&nbsp; 
+                                    Size: <span style="font-weight: 600;">{{ order.dress_details.size if order.dress_details and order.dress_details.size else 'N/A' }}</span> &nbsp;|&nbsp; 
+                                    Quantity: <span style="font-weight: 600;">{{ order.dress_details.quantity if order.dress_details and order.dress_details.quantity else 'N/A' }}</span> &nbsp;|&nbsp; 
+                                    Price: <span style="font-weight: 600; color: #27ae60;">₹{{ order.dress_details.price if order.dress_details and order.dress_details.price else 'N/A' }}</span><br>
+                                    Material: <span style="font-weight: 600;">{{ order.original_dress.type if order.original_dress and order.original_dress.type else 'N/A' }}</span> &nbsp;|&nbsp; 
+                                    Description: <span style="font-weight: 600;">{{ order.original_dress.description if order.original_dress and order.original_dress.description else 'N/A' }}</span>
+                                </div>
+                                
+                                
+                                <div class="detail-section customization">
+                                    <strong style="color: #fc5c7d;">Customization Details:</strong><br>
+                                    Gender: <span style="font-weight: 600;">{{ order.dress_details.gender if order.dress_details and order.dress_details.gender else 'N/A' }}</span> &nbsp;|&nbsp; 
+                                    Dress Type: <span style="font-weight: 600;">{{ order.dress_details.dress_type if order.dress_details and order.dress_details.dress_type else 'N/A' }}</span> &nbsp;|&nbsp; 
+                                    Dress Design: <span style="font-weight: 600;">{{ order.dress_details.dress_design if order.dress_details and order.dress_details.dress_design else 'N/A' }}</span>
+                                </div>
+                                
+                                {% set base_price = order.dress_details.price if order.dress_details and order.dress_details.price else 0 %}
+                                {% set quantity = order.dress_details.quantity if order.dress_details and order.dress_details.quantity else 1 %}
+                                {% set gender = order.dress_details.gender if order.dress_details and order.dress_details.gender else '' %}
+                                {% set dress_type = order.dress_details.dress_type if order.dress_details and order.dress_details.dress_type else '' %}
+                                {% set dress_design = order.dress_details.dress_design if order.dress_details and order.dress_details.dress_design else '' %}
+                                {% set size = order.dress_details.size if order.dress_details and order.dress_details.size else '' %}
+                                
+                               
+                                {% set enhanced_price = base_price %}
+                                {% if gender and dress_type and dress_design and size %}
+                                    {% if gender == 'baby' %}
+                                        {% if dress_type == 'Footed romper' %}{% set type_mult = 0.80 %}{% elif dress_type == 'Snap-up romper' %}{% set type_mult = 0.85 %}{% elif dress_type == 'Hoody' %}{% set type_mult = 1.10 %}{% else %}{% set type_mult = 1.00 %}{% endif %}
+                                    {% elif gender == 'men' %}
+                                        {% if dress_type == 'Pant' %}{% set type_mult = 1.20 %}{% elif dress_type == 'Shirt' %}{% set type_mult = 1.00 %}{% elif dress_type == 'Jacket' %}{% set type_mult = 1.50 %}{% elif dress_type == 'Sweater' %}{% set type_mult = 1.30 %}{% else %}{% set type_mult = 1.00 %}{% endif %}
+                                    {% elif gender == 'women' %}
+                                        {% if dress_type == 'Top' %}{% set type_mult = 1.00 %}{% elif dress_type == 'Pant' %}{% set type_mult = 1.15 %}{% elif dress_type == 'Jacket' %}{% set type_mult = 1.40 %}{% else %}{% set type_mult = 1.00 %}{% endif %}
+                                    {% else %}
+                                        {% set type_mult = 1.00 %}
+                                    {% endif %}
+                                    
+                                    {% set design_mult = 1.00 %}
+                                    {% if gender == 'baby' %}
+                                        {% if dress_design == 'Full Hand' %}{% set design_mult = 1.20 %}{% elif dress_design == 'Half Hand' %}{% set design_mult = 1.00 %}{% elif dress_design == 'Sleeveless' %}{% set design_mult = 0.90 %}{% elif dress_design == 'Shorts' %}{% set design_mult = 0.70 %}{% elif dress_design == 'Hooded onesie' %}{% set design_mult = 1.30 %}{% elif dress_design == 'Baby sweat suit' %}{% set design_mult = 1.15 %}{% elif dress_design == 'Cotton jumpsuit' %}{% set design_mult = 1.00 %}{% endif %}
+                                    {% elif gender == 'men' %}
+                                        {% if dress_design == 'Chinos' %}{% set design_mult = 1.10 %}{% elif dress_design == 'Jeans' %}{% set design_mult = 1.25 %}{% elif dress_design == 'Shorts' %}{% set design_mult = 0.80 %}{% elif dress_design == 'Cargo' %}{% set design_mult = 1.15 %}{% elif dress_design == 'Full Hand' %}{% set design_mult = 1.20 %}{% elif dress_design == 'Casual' %}{% set design_mult = 1.00 %}{% elif dress_design == 'Half Hand' %}{% set design_mult = 1.10 %}{% elif dress_design == 'T-Shirt' %}{% set design_mult = 0.85 %}{% elif dress_design == 'Leather' %}{% set design_mult = 1.40 %}{% elif dress_design == 'Denim' %}{% set design_mult = 1.20 %}{% elif dress_design == 'Long sleeve' %}{% set design_mult = 1.30 %}{% elif dress_design == 'Pullover' %}{% set design_mult = 1.15 %}{% elif dress_design == 'Crew Neck' %}{% set design_mult = 1.00 %}{% elif dress_design == 'V-Neck' %}{% set design_mult = 1.05 %}{% endif %}
+                                    {% elif gender == 'women' %}
+                                        {% if dress_design == 'T-Shirt' %}{% set design_mult = 0.85 %}{% elif dress_design == 'Blouse' %}{% set design_mult = 1.15 %}{% elif dress_design == 'Tank Top' %}{% set design_mult = 0.75 %}{% elif dress_design == 'Hoodie' %}{% set design_mult = 1.25 %}{% elif dress_design == 'Straight' %}{% set design_mult = 1.00 %}{% elif dress_design == 'Skinny' %}{% set design_mult = 1.05 %}{% elif dress_design == 'Wide Leg' %}{% set design_mult = 1.20 %}{% elif dress_design == 'Culottes' %}{% set design_mult = 1.15 %}{% elif dress_design == 'Long sleeve' %}{% set design_mult = 1.30 %}{% elif dress_design == 'Short Sleeve' %}{% set design_mult = 1.10 %}{% elif dress_design == 'Open Front' %}{% set design_mult = 1.20 %}{% endif %}
+                                    {% endif %}
+                                    
+                                    {% set size_mult = 1.00 %}
+                                    {% if gender == 'baby' %}
+                                        {% if size == 'small' %}{% set size_mult = 0.60 %}{% elif size == 'medium' %}{% set size_mult = 0.75 %}{% elif size == 'large' %}{% set size_mult = 1.00 %}{% endif %}
+                                    {% else %}
+                                        {% if size in ['S', '28'] %}{% set size_mult = 0.90 %}{% elif size in ['M', '30'] %}{% set size_mult = 0.95 %}{% elif size in ['L', '32'] %}{% set size_mult = 1.00 %}{% elif size in ['XL', '34'] %}{% set size_mult = 1.05 %}{% elif size == '36' %}{% set size_mult = 1.10 %}{% elif size == '38' %}{% set size_mult = 1.15 %}{% endif %}
+                                    {% endif %}
+                                    
+                                    {% set enhanced_price = base_price * type_mult * design_mult * size_mult %}
+                                {% endif %}
+                                
+                                {% set total_price = enhanced_price * quantity %}
+                                <div class="detail-section total">
+                                    <strong style="color: #27ae60;">Enhanced Total Order Value:</strong> 
+                                    <span style="font-weight: 700; font-size: 1.1em; color: #27ae60;">₹{{ "%.2f"|format(total_price) }}</span>
+                                    {% if gender and dress_type and dress_design and size %}
+                                        <br><small style="color: #666;">(Base: ₹{{ "%.2f"|format(base_price) }} × Type: {{ "%.2f"|format(type_mult) }} × Design: {{ "%.2f"|format(design_mult) }} × Size: {{ "%.2f"|format(size_mult) }} × Qty: {{ quantity }})</small>
+                                    {% endif %}
+                                </div>
+                                
+                                <div style="font-size:0.75em; color:#666; margin-top:8px; padding: 6px; background: #f1f3f4; border-radius: 4px; border-left: 3px solid #ff9800;">
+                                    <strong>Debug Info:</strong><br>
+                                    Dress Details Available: {{ 'Yes' if order.dress_details else 'No' }}<br>
+                                    Color Field: {{ order.dress_details.color if order.dress_details else 'No dress_details' }}<br>
+                                    Original Dress Available: {{ 'Yes' if order.original_dress else 'No' }}<br>
+                                    Image URL: {{ order.dress_details.image_url if order.dress_details else 'No image available' }}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="product-details">
+                            <div style="color: #888; font-style: italic;">
+                                No dress details available
+                            </div>
+                        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - Textiles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container fade-in">
+        <!-- Back Button -->
+        <div class="back-button-container">
+            <a href="{{ url_for('forgot_password') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <div class="auth-header">
+            <h1><i class="fas fa-shield-alt"></i> Verify OTP</h1>
+            <p>Enter the verification code sent to your email</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message flash-info">
+                            <i class="fas fa-info-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('verify_otp') }}" class="slide-up">
+            <div class="form-group">
+                <label for="otp">
+                    <i class="fas fa-keyboard"></i> Verification Code
+                </label>
+                <input type="text" id="otp" name="otp" class="form-control" 
+                       placeholder="Enter 6-digit OTP" maxlength="6" pattern="[0-9]{6}" required>
+                <small style="color: var(--gray-600); font-size: 0.875rem; margin-top: 0.25rem; display: block;">
+                    <i class="fas fa-info-circle"></i> Enter the 6-digit code sent to your email
+                </small>
+            </div>
+
+            <input type="hidden" id="email" name="email" value="{{ email }}">
+
+            <button type="submit" class="btn btn-primary">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <i class="fas fa-check"></i> Verify OTP
+            </button>
+        </form>
+
+        <div class="auth-links" style="text-align: center; margin-top: 1.5rem;">
+            <a href="{{ url_for('forgot_password') }}" class="auth-link">
+                <i class="fas fa-arrow-left"></i> Back to Forgot Password
+            </a>
+        </div>
+
+        <div class="auth-links" style="text-align: center; margin-top: 1rem;">
+            <a href="{{ url_for('login') }}" class="auth-link">
+                <i class="fas fa-sign-in-alt"></i> Back to Login
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const otpInput = document.getElementById('otp');
+            const inputs = document.querySelectorAll('.form-control');
+            
+            // Add focus effects
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+
+            // OTP input formatting and validation
+            otpInput.addEventListener('input', function() {
+                // Remove non-numeric characters
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Limit to 6 digits
+                if (this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                }
+                
+                // Add validation styling
+                if (this.value.length === 6) {
+                    this.classList.add('is-valid');
+                    this.classList.remove('is-invalid');
+                } else if (this.value.length > 0) {
+                    this.classList.add('is-invalid');
+                    this.classList.remove('is-valid');
+                } else {
+                    this.classList.remove('is-valid', 'is-invalid');
+                }
+            });
+
+            // Form submission validation and loading state
+            form.addEventListener('submit', function(e) {
+                if (otpInput.value.length !== 6) {
+                    e.preventDefault();
+                    alert('Please enter a valid 6-digit OTP');
+                    otpInput.focus();
+                    return;
+                }
+
+                const submitBtn = this.querySelector('.btn-primary');
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            });
+
+            // Auto-focus OTP input
+            otpInput.focus();
+        });
+    </script>
+</body>
+</html>

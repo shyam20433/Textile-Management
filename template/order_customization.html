@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Customization</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .header h2 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+        }
+
+        .order-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dress-details,
+        .customization-form {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+        }
+
+        .dress-details {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dress-details h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .dress-image {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            border-radius: 15px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dress-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .dress-details p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .dress-details strong {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .customization-form h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .color-display {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .gender-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .gender-icon {
+            font-size: 2.5rem;
+            padding: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 2px solid transparent;
+        }
+
+        .gender-icon:hover {
+            transform: scale(1.1);
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .gender-icon.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .price-display {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .order-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h2 {
+                font-size: 2rem;
+            }
+            
+            .customization-form h1 {
+                font-size: 1.5rem;
+            }
+            
+            .gender-options {
+                gap: 15px;
+            }
+            
+            .gender-icon {
+                font-size: 2rem;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .dress-details,
+            .customization-form {
+                padding: 20px;
+            }
+            
+            .header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h2>Customize Your Dress Order</h2>
+    </div>
+
+    <div class="order-container">
+        <div class="dress-details">
+            <h2>Dress Details</h2>
+            <img id="dress-image" src="{{ dress.image_url }}" alt="{{ dress.name }}" class="dress-image">
+            <p><strong>Name:</strong> {{ dress.name }}</p>
+            <p><strong>Description:</strong> {{ dress.description }}</p>
+            <p><strong>Color:</strong> {{ dress.color }}</p>
+            <p><strong>Material:</strong> {{ dress.type }}</p>
+        </div>
+
+        <div class="customization-form">
+            <h1>Order Customization</h1>
+            <form method="POST" action="{{ url_for('order_customization', dress_id=dress._id) }}">
+                <div>
+                    <p><strong>Color:</strong> {{ dress.color }}</p>
+                    <input type="hidden" id="color" name="color" value="{{ dress.color }}">
+                </div>
+                <input type="hidden" name="gender" id="gender" value="">
+                <label>Gender:</label>
+                <div class="gender-options">
+                    <i class="gender-icon fas fa-baby" onclick="selectGender('baby')"></i>
+                    <i class="gender-icon fas fa-male" onclick="selectGender('men')"></i>
+                    <i class="gender-icon fas fa-female" onclick="selectGender('women')"></i>
+                </div>
+
+                <label for="dress_type">Dress Type:</label>
+                <select name="dress_type" id="dress_type" required onchange="updateDesignOptions()">
+                    <option value="">Select Dress Type</option>
+                </select>
+
+                <label for="dress_design">Dress Design:</label>
+                <select name="dress_design" id="dress_design" required>
+                    <option value="">Select Dress Design</option>
+                </select>
+
+                <label for="size">Size:</label>
+                <select name="size" id="size" required>
+                    <option value="">Select Size</option>
+                </select>
+
+                <label for="age">Age:</label>
+                <select name="age" id="age" required>
+                    <option value="">Select Age</option>
+                    <option value="1-5">1-5</option>
+                    <option value="6-10">6-10</option>
+                    <option value="11-15">11-20</option>
+                    <option value="16-20">21-30</option>
+                    <option value="21-25">31-40</option>
+                    <option value="41-45">41-50</option>
+                    <option value="51-55">51-60</option>
+                </select>
+
+                <div id="price-display" class="price-display"></div>
+
+                <label for="quantity">Quantity:</label>
+                <select name="quantity" id="quantity" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+
+                <button type="submit">Order Now</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        
+        const image_url_map_baby = {
+            "Half Hand": {
+                'black': '/static/dress/black ft.jpg',
+                'red': '/static/dress/red ft.jpg',
+                'blue': '/static/dress/blue ft.jpg',
+                'milk': '/static/dress/milk ft.jpg',
+                'yellow': '/static/dress/yellow ft.jpg',
+                'brown': '/static/dress/brown hft.jpg',
+            },
+            "Full Hand": {
+                'black': '/static/dress/black fft.jpg',
+                'red': '/static/dress/red fft.jpg',
+                'blue': '/static/dress/blue fft.jpg',
+                'milk': '/static/dress/milk fft.jpg',
+                'yellow': '/static/dress/yellow fft.jpg',
+                'brown': '/static/dress/brown ft.jpg',
+            },
+            "Shorts": {
+                'black': '/static/dress/black sft.jpg',
+                'red': '/static/dress/red sft.jpg',
+                'blue': '/static/dress/blue sft.jpg',
+                'milk': '/static/dress/milk sft.jpg',
+                'yellow': '/static/dress/yellow sft.jpg',
+                'brown': '/static/dress/brown sft.jpg',
+            },
+            "Sleeveless": {
+                'black': '/static/dress/black bsl.jpg',
+                'red': '/static/dress/red bsl.jpg',
+                'blue': '/static/dress/blue bsl.jpg',
+                'milk': '/static/dress/milk bsl.jpg',
+                'yellow': '/static/dress/yellow bsl.jpg',
+                'brown': '/static/dress/brown bsl.jpg',
+            },
+            "Hooded onesie": {
+                'black': '/static/dress/black bh.jpg',
+                'red': '/static/dress/red bh.jpg',
+                'blue': '/static/dress/blue bh.jpg',
+                'milk': '/static/dress/milk bh.jpg',
+                'yellow': '/static/dress/yellow bh.jpg',
+                'brown': '/static/dress/brown bh.jpg',
+            },
+            "Baby sweat suit": {
+                'black': '/static/dress/black bss.jpg',
+                'red': '/static/dress/red bss.jpg',
+                'blue': '/static/dress/blue bss.jpg',
+                'milk': '/static/dress/milk bss.jpg',
+                'yellow': '/static/dress/yellow bss.jpg',
+                'brown': '/static/dress/brown bss.jpg',
+            },
+            "Cotton jumpsuit": {
+                'black': '/static/dress/black bj.jpg',
+                'red': '/static/dress/red bj.jpg',
+                'blue': '/static/dress/blue bj.jpg',
+                'milk': '/static/dress/milk bj.jpg',
+                'yellow': '/static/dress/yellow bj.jpg',
+                'brown': '/static/dress/brown bj.jpg',
+            }
+        };
+
+        const image_url_map_men = {
+            "Full Hand": {
+                'black': '/static/dress/black ffb.jpg',
+                'red': '/static/dress/red ffb.jpg',
+                'blue': '/static/dress/blue ffb.jpg',
+                'milk': '/static/dress/milk ffb.jpg',
+                'yellow': '/static/dress/yellow ffb.jpg',
+                'brown': '/static/dress/brown ffb.jpg',
+            },
+            "Half Hand": {
+                'black': '/static/dress/black hfb.jpg',
+                'red': '/static/dress/red hfb.jpg',
+                'blue': '/static/dress/blue hfb.jpg',
+                'milk': '/static/dress/milk hfb.jpg',
+                'yellow': '/static/dress/yellow hfb.jpg',
+                'brown': '/static/dress/brown hfb.jpg',
+            },
+            "Casual": {
+                'black': '/static/dress/black cfb.jpg',
+                'red': '/static/dress/red cfb.jpg',
+                'blue': '/static/dress/blue cfb.jpg',
+                'milk': '/static/dress/milk cfb.jpg',
+                'yellow': '/static/dress/yellow cfb.jpg',
+                'brown': '/static/dress/brown cfb.jpg',
+            },
+            "T-Shirt": {
+                'black': '/static/dress/black p.jpg',
+                'red': '/static/dress/red p.jpg',
+                'blue': '/static/dress/blue p.jpg',
+                'milk': '/static/dress/milk p.jpg',
+                'yellow': '/static/dress/yellow p.jpg',
+                'brown': '/static/dress/brown p.jpg',
+            },
+            "Long sleeve": {
+                'black': '/static/dress/black jfw.jpg',
+                'red': '/static/dress/red jfw.jpg',
+                'blue': '/static/dress/blue jfw.jpg',
+                'milk': '/static/dress/milk jfw.jpg',
+                'yellow': '/static/dress/yellow jfw.jpg',
+                'brown': '/static/dress/brown jfw.jpg',
+            }
+        };
+
+        const image_url_map_women = {
+            'Open Front': {
+                'black': '/static/dress/black of.jpg',
+                'red': '/static/dress/red of.jpg',
+                'blue': '/static/dress/blue of.jpg',
+                'milk': '/static/dress/milk of.jpg',
+                'yellow': '/static/dress/yellow of.jpg',
+                'brown': '/static/dress/brown of.jpg',
+            },
+            "Straight": {
+                'black': '/static/dress/black wps.jpg',
+                'red': '/static/dress/red ws.jpg',
+                'blue': '/static/dress/blue ws.jpg',
+                'milk': '/static/dress/milk ws.jpg',
+                'yellow': '/static/dress/yellow ws.jpg',
+                'brown': '/static/dress/brown ws.jpg',
+            },
+            "Skinny": {
+                'black': '/static/dress/black wps.jpg',
+                'red': '/static/dress/red wps.jpg',
+                'blue': '/static/dress/blue wps.jpg',
+                'milk': '/static/dress/milk wps.jpg',
+                'yellow': '/static/dress/yellow wps.jpg',
+                'brown': '/static/dress/brown wps.jpg',
+            },
+            "Wide Leg": {
+                'black': '/static/dress/black ww.jpg',
+                'red': '/static/dress/red ww.jpg',
+                'blue': '/static/dress/blue ww.jpg',
+                'milk': '/static/dress/milk ww.jpg',
+                'yellow': '/static/dress/yellow ww.jpg',
+                'brown': '/static/dress/brown ww.jpg',
+            },
+            "Long sleeve": {
+                'black': '/static/dress/black jfw.jpg',
+                'red': '/static/dress/red jfw.jpg',
+                'blue': '/static/dress/blue jfw.jpg',
+                'milk': '/static/dress/milk jfw.jpg',
+                'yellow': '/static/dress/yellow jfw.jpg',
+                'brown': '/static/dress/brown jfw.jpg',
+            }
+        };
+
+        // Get the dress price from the template
+        const dressPrice = parseFloat('{{ dress.price or 0 }}');
+        
+      
+        const dressData = {
+            baby: {
+                'Footed romper': {
+                    designs: ['Full Hand', 'Half Hand', 'Sleeveless', 'Shorts'],
+                    sizes: { 'small': { price: (0.60 * {{ dress.price }}) }, 'medium': { price: (0.75 * {{ dress.price }}) }, 'large': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Snap-up romper': {
+                    designs: ['Full Hand', 'Half Hand', 'Sleeveless', 'Shorts'],
+                    sizes: { 'small': { price: (0.60 * {{ dress.price }}) }, 'medium': { price: (0.75 * {{ dress.price }}) }, 'large': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Hoody': {
+                    designs: ['Hooded onesie','Baby sweat suit', 'Cotton jumpsuit'],
+                    sizes: { 'small': { price: (0.60 * {{ dress.price }}) }, 'medium': { price: (0.75 * {{ dress.price }}) }, 'large': { price: (1.00 * {{ dress.price }}) } }
+                },
+            },
+            men: {
+                'Pant': {
+                    designs: ['Chinos', 'Jeans', 'Shorts', 'Cargo'],
+                    sizes: { '28': { price: (1.00 * {{ dress.price }}) }, '30': { price: (1.00 * {{ dress.price }}) }, '32': { price: (1.00 * {{ dress.price }}) }, '34': { price: (1.00 * {{ dress.price }}) }, '36': { price: (1.00 * {{ dress.price }}) }, '38': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Shirt': {
+                    designs: ['Full Hand', 'Casual', 'Half Hand', 'T-Shirt'],
+                    sizes: { 'S': { price: (1.00 * {{ dress.price }}) }, 'M': { price: (1.00 * {{ dress.price }}) }, 'L': { price: (1.00 * {{ dress.price }}) }, 'XL': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Jacket': {
+                    designs: ['Leather', 'Denim', 'Long sleeve'],
+                    sizes: { 'S': { price: (1.00 * {{ dress.price }}) }, 'M': { price: (1.00 * {{ dress.price }}) }, 'L': { price: (1.00 * {{ dress.price }}) }, 'XL': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Sweater': {
+                    designs: ['Pullover', 'Crew Neck', 'V-Neck'],
+                    sizes: { 'S': { price: (1.00 * {{ dress.price }}) }, 'M': { price: (1.00 * {{ dress.price }}) }, 'L': { price: (1.00 * {{ dress.price }}) }, 'XL': { price: (1.00 * {{ dress.price }}) } }
+                },
+            },
+            women: {
+                'Top': {
+                    designs: ['T-Shirt', 'Blouse', 'Tank Top', 'Hoodie'],
+                    sizes: { 'S': { price: (1.00 * {{ dress.price }}) }, 'M': { price: (1.00 * {{ dress.price }}) }, 'L': { price: (1.00 * {{ dress.price }}) }, 'XL': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Skirt': {
+                    designs: ['A-Line', 'Pencil', 'Maxi', 'Mini'],
+                    sizes: { 'S': { price: (1.00 * {{ dress.price }}) }, 'M': { price: (1.00 * {{ dress.price }}) }, 'L': { price: (1.00 * {{ dress.price }}) }, 'XL': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Legging': {
+                    designs: ['Full Length', 'Capri', 'High Waist', 'Printed'],
+                    sizes: { '28': { price: (1.00 * {{ dress.price }}) }, '30': { price: (1.00 * {{ dress.price }}) }, '32': { price: (1.00 * {{ dress.price }}) }, '34': { price: (1.00 * {{ dress.price }}) }, '36': { price: (1.00 * {{ dress.price }}) }, '38': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Pant': {
+                    designs: ['Straight', 'Skinny', 'Wide Leg', 'Culottes'],
+                    sizes: { '28': { price: (1.00 * {{ dress.price }}) }, '30': { price: (1.00 * {{ dress.price }}) }, '32': { price: (1.00 * {{ dress.price }}) }, '34': { price: (1.00 * {{ dress.price }}) }, '36': { price: (1.00 * {{ dress.price }}) }, '38': { price: (1.00 * {{ dress.price }}) } }
+                },
+                'Jacket': {
+                    designs: ['Long sleeve', 'Short Sleeve', 'Open Front'],
+                    sizes: { 'S': { price: (1.00 * {{ dress.price }}) }, 'M': { price: (1.00 * {{ dress.price }}) }, 'L': { price: (1.00 * {{ dress.price }}) }, 'XL': { price: (1.00 * {{ dress.price }}) } }
+                },
+            }
+        };
+
+        function selectGender(gender) {
+            document.getElementById('gender').value = gender;
+            updateDressTypeOptions();
+        }
+
+        function updateDressTypeOptions() {
+            const gender = document.getElementById('gender').value;
+            const dressTypeSelect = document.getElementById('dress_type');
+            const dressDesignSelect = document.getElementById('dress_design');
+            const sizeSelect = document.getElementById('size');
+            const priceDisplay = document.getElementById('price-display');
+
+           
+            dressTypeSelect.innerHTML = '<option value="">Select Dress Type</option>';
+            dressDesignSelect.innerHTML = '<option value="">Select Dress Design</option>';
+            sizeSelect.innerHTML = '<option value="">Select Size</option>';
+            priceDisplay.innerHTML = '';
+
+            if (gender) {
+               
+                Object.keys(dressData[gender]).forEach((type) => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    dressTypeSelect.appendChild(option);
+                });
+            }
+        }
+
+        function updateDesignOptions() {
+            const gender = document.getElementById('gender').value;
+            const dressType = document.getElementById('dress_type').value;
+            const dressDesignSelect = document.getElementById('dress_design');
+            const sizeSelect = document.getElementById('size');
+            const priceDisplay = document.getElementById('price-display');
+
+          
+            dressDesignSelect.innerHTML = '<option value="">Select Dress Design</option>';
+            sizeSelect.innerHTML = '<option value="">Select Size</option>';
+            priceDisplay.innerHTML = '';
+
+            if (gender && dressType) {
+                dressData[gender][dressType].designs.forEach((design) => {
+                    const option = document.createElement('option');
+                    option.value = design;
+                    option.textContent = design;
+                    dressDesignSelect.appendChild(option);
+                });
+
+                Object.keys(dressData[gender][dressType].sizes).forEach((size) => {
+                    const option = document.createElement('option');
+                    option.value = size;
+                    option.textContent = size;
+                    sizeSelect.appendChild(option);
+                });
+            }
+        }
+
+        function updatePriceDisplay() {
+            const gender = document.getElementById('gender').value;
+            const dressType = document.getElementById('dress_type').value;
+            const selectedSize = document.getElementById('size').value;
+            const quantity = document.getElementById('quantity').value;
+            const priceDisplay = document.getElementById('price-display');
+
+            if (gender && dressType && selectedSize) {
+                const price = dressData[gender][dressType].sizes[selectedSize].price;
+                const total = price * quantity;
+                priceDisplay.innerHTML = `Price: ₹${total.toFixed(2)}`;
+            } else {
+                priceDisplay.innerHTML = '';
+            }
+        }
+
+        document.getElementById('size').addEventListener('change', updatePriceDisplay);
+        document.getElementById('quantity').addEventListener('change', updatePriceDisplay);
+    </script>
+</body>
+
+</html>

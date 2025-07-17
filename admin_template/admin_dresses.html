@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Dresses</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: #f4f6fb;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 230px;
+            background: linear-gradient(180deg, #6a82fb 0%, #fc5c7d 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+        }
+        .sidebar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 32px 0 24px 0;
+            text-align: center;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 24px;
+        }
+        .sidebar nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 16px 32px;
+            font-size: 1.08rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .sidebar nav a.active, .sidebar nav a:hover {
+            background: rgba(255,255,255,0.08);
+            border-left: 4px solid #fff;
+        }
+        .sidebar .logout {
+            margin: 24px 0 0 0;
+            padding: 16px 32px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.08rem;
+        }
+        main {
+            flex: 1;
+            padding: 36px 36px 24px 36px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 32px 24px 24px 24px;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #3a4cb8;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .dresses-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .dresses-table th, .dresses-table td {
+            padding: 12px 8px;
+            text-align: left;
+        }
+        .dresses-table th {
+            background: #f4f6fb;
+            font-weight: 600;
+        }
+        .dresses-table tr {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .dresses-table tr:last-child {
+            border-bottom: none;
+        }
+        .edit-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 8px;
+            transition: background 0.2s;
+        }
+        .edit-btn:hover {
+            background: #1e40af;
+        }
+        .delete-btn {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .delete-btn:hover {
+            background: #b91c1c;
+        }
+        .add-dress-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: #fff;
+            border: 2px solid #6a82fb;
+            border-radius: 14px;
+            color: #6a82fb;
+            font-weight: 700;
+            font-size: 1.13rem;
+            box-shadow: 0 4px 18px rgba(106,130,251,0.10);
+            text-decoration: none;
+            transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s, transform 0.18s;
+            margin-left: auto;
+        }
+        .add-dress-box i {
+            font-size: 1.2em;
+        }
+        .add-dress-box:hover {
+            background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+            color: #fff;
+            border-color: #fc5c7d;
+            box-shadow: 0 8px 32px rgba(90,120,255,0.13);
+            transform: translateY(-2px) scale(1.04);
+        }
+        @media (max-width: 900px) {
+            main { padding: 12px 2vw 12px 2vw; }
+            h2 { font-size: 1.3rem; }
+        }
+        @media (max-width: 600px) {
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; height: auto; overflow-x: auto; }
+            .sidebar nav { flex-direction: row; overflow-x: auto; }
+            .sidebar nav a, .sidebar .logout { padding: 12px 10px; font-size: 1rem; }
+            main { padding: 8px 1vw 8px 1vw; }
+            .container { padding: 10px 2vw; max-width: 100%; width: 100%; }
+            .dresses-table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; }
+            h2 { font-size: 1.2rem; }
+            .add-dress-box { font-size: 1rem; }
+        }
+        .fade-in {
+          animation: fadeIn 0.8s cubic-bezier(.4,2,.6,1);
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: none; }
+        }
+        .container, .card {
+          transition: box-shadow 0.25s cubic-bezier(.4,2,.6,1), transform 0.18s cubic-bezier(.4,2,.6,1);
+        }
+        .container:hover, .card:hover {
+          box-shadow: 0 8px 32px rgba(90,120,255,0.18);
+          transform: translateY(-2px) scale(1.02);
+        }
+        .sidebar nav a {
+          transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+        }
+        .sidebar nav a:hover {
+          transform: translateX(4px) scale(1.04);
+        }
+        .edit-btn, .delete-btn, .add-btn {
+          transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
+        }
+        .edit-btn:hover, .delete-btn:hover, .add-btn:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 16px rgba(90,120,255,0.13);
+        }
+        .dresses-table tr {
+          transition: background 0.18s, box-shadow 0.18s;
+        }
+        .dresses-table tr:hover {
+          background: #eaf0ff;
+          box-shadow: 0 2px 12px rgba(90,120,255,0.10);
+        }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="logo"><i class="fas fa-crown"></i> Admin Panel</div>
+        <nav>
+            <a href="/" ><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/admin/dresses" class="active"><i class="fas fa-tshirt"></i> Dresses</a>
+            <a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+            <a href="/admin/users"><i class="fas fa-users"></i> Users</a>
+            <a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a>
+        </nav>
+        <a href="/logout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </aside>
+    <main>
+        <div class="container fade-in">
+            <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 18px;">
+                <h2><i class="fas fa-tshirt"></i> Manage Dresses</h2>
+                <a href="/admin/dress/add" class="add-dress-box">
+                    <i class="fas fa-plus"></i> Add New Dress
+                </a>
+            </div>
+            <table class="dresses-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Color</th>
+                    <th>Price (₹)</th>
+                    <th>Actions</th>
+                </tr>
+                {% for dress in dresses %}
+                <tr>
+                    <td>{{ dress.name }}</td>
+                    <td><span class="color-preview" style="background-color: {{ dress.color }};"></span>{{ dress.color }}</td>
+                    <td>₹{{ "%.2f"|format(dress.price|float) }}</td>
+                    <td class="action-links">
+                        <a href="/admin/dress/edit/{{ dress._id }}" class="edit-btn"><i class="fas fa-edit"></i> Edit</a>
+                        <a href="/admin/dress/delete/{{ dress._id }}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this dress?')"><i class="fas fa-trash-alt"></i> Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </main>
+</div>
+</body>
+</html>

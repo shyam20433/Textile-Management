@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Your Order</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a82fb;
+            --primary-light: #8e9ffa;
+            --primary-dark: #4a6cf7;
+            --accent: #fc5c7d;
+            --white: #ffffff;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            transition: var(--transition);
+        }
+
+        .summary-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .summary-content {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+        }
+
+        .summary-image {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            background: var(--light);
+        }
+
+        .summary-title {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .summary-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+        }
+
+        .summary-detail {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .summary-detail strong {
+            min-width: 120px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .summary-detail span {
+            flex: 1;
+            color: var(--dark);
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .total-price strong {
+            margin-right: 10px;
+            color: var(--gray);
+        }
+
+        .dress-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .dress-image:hover {
+            transform: scale(1.03);
+        }
+
+        .edit-button {
+            margin-left: 10px;
+            padding: 5px 12px;
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .edit-button:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .edit-form {
+            display: none;
+            margin-top: 25px;
+            padding: 25px;
+            background: var(--light);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .edit-form h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--white);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(106, 130, 251, 0.2);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(106, 130, 251, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 130, 251, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--gray);
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+            color: var(--dark);
+        }
+
+        .btn-success {
+            background: linear-gradient(to right, #28a745, #20c997);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .summary-card {
+                flex-direction: column;
+            }
+            
+            .summary-content, .summary-image {
+                padding: 20px;
+            }
+            
+            .summary-title {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-detail {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .summary-detail strong {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="summary-card">
+            <div class="summary-content">
+                <h2 class="summary-title">Review Your Order</h2>
+                
+                <div class="summary-detail">
+                    <strong>Dress Name:</strong>
+                    <span>{{ dress.name }}</span>
+                </div>
+                
+                <div class="summary-detail">
+                    <strong>Description:</strong>
+                    <span>{{ dress.description }}</span>
+                </div>
+                
+                <div class="summary-detail">
+                    <strong>Color:</strong>
+                    <span>{{ color|title }}</span>
+                </div>
+                
+                <div class="summary-detail">
+                    <strong>Gender:</strong>
+                    <span>{{ gender|title }}</span>
+                </div>
+                
+                <div class="summary-detail">
+                    <strong>Dress Type:</strong>
+                    <span id="dress-type-display">{{ dress_type|title }}</span>
+                    <button class="edit-button" onclick="editOption()">Edit</button>
+                </div>
+                
+                <div class="summary-detail">
+                    <strong>Dress Design:</strong>
+                    <span id="dress-design-display">{{ dress_design }}</span>
+                    <button class="edit-button" onclick="editOption()">Edit</button>
+                </div>
+                
+                <div class="summary-detail">
+                    <strong>Size:</strong>
+                    <span id="size-display">{{ size|title }}</span>
+                    <button class="edit-button" onclick="editOption()">Edit</button>
+                </div>
+                
+                <div class="summary-detail">
+                    <strong>Quantity:</strong>
+                    <span id="quantity-display">{{ quantity }}</span>
+                    <button class="edit-button" onclick="editOption()">Edit</button>
+                </div>
+                
+                <div class="total-price">
+                    <strong>Total Price:</strong>
+                    <span id="total-price">₹{{ '%.2f'|format(total_price) }}</span>
+                </div>
+
+                <form method="POST" action="{{ url_for('review_order', dress_id=dress._id) }}">
+                    <input type="hidden" id="hidden-dress-type" name="dress_type" value="{{ dress_type }}">
+                    <input type="hidden" id="hidden-dress-design" name="dress_design" value="{{ dress_design }}">
+                    <input type="hidden" id="hidden-size" name="size" value="{{ size }}">
+                    <input type="hidden" id="hidden-quantity" name="quantity" value="{{ quantity }}">
+                    <input type="hidden" name="gender" value="{{ gender }}">
+                    <input type="hidden" name="color" value="{{ color }}">
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check-circle"></i> Confirm Order
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Edit Form -->
+                <div class="edit-form" id="edit-form">
+                    <h3><i class="fas fa-edit"></i> Edit Order Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="edit-dress-type">Dress Type</label>
+                        <select class="form-control" id="edit-dress-type" onchange="updateDesignOptions(); updatePreview();">
+                            <option value="">Select Dress Type</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-dress-design">Dress Design</label>
+                        <select class="form-control" id="edit-dress-design" onchange="updatePreview();">
+                            <option value="">Select Dress Design</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-size">Size</label>
+                        <select class="form-control" id="edit-size" onchange="updatePreview();">
+                            <option value="">Select Size</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-quantity">Quantity</label>
+                        <select class="form-control" id="edit-quantity" onchange="updatePreview();">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-primary" onclick="saveChanges()">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-image">
+                {% if image_url %}
+                    <img src="{{ image_url }}" alt="Custom Dress" class="dress-image" id="dress-image">
+                {% else %}
+                    <div class="no-image">
+                        <i class="fas fa-image" style="font-size: 3rem; color: var(--gray);"></i>
+                        <p>No image available</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get the dress price from the template
+        const dressPrice = parseFloat('{{ dress.price or 0 }}');
+        // Remove markup from price calculation
+        const markup = 1.0; // No markup
+        const gender = '{{ gender }}';
+        const color = '{{ color }}'.toLowerCase();
+        
+        // Image URL mapping
+        const imageUrlMap = {
+            baby: {
+                "Half Hand": {
+                    'black': '/static/dress/black ft.jpg',
+                    'red': '/static/dress/red ft.jpg',
+                    'blue': '/static/dress/blue ft.jpg',
+                    'milk': '/static/dress/milk ft.jpg',
+                    'yellow': '/static/dress/yellow ft.jpg',
+                    'brown': '/static/dress/brown hft.jpg',
+                },
+                "Full Hand": {
+                    'black': '/static/dress/black fft.jpg',
+                    'red': '/static/dress/red fft.jpg',
+                    'blue': '/static/dress/blue fft.jpg',
+                    'milk': '/static/dress/milk fft.jpg',
+                    'yellow': '/static/dress/yellow fft.jpg',
+                    'brown': '/static/dress/brown ft.jpg',
+                },
+                "Shorts": {
+                    'black': '/static/dress/black sft.jpg',
+                    'red': '/static/dress/red sft.jpg',
+                    'blue': '/static/dress/blue sft.jpg',
+                    'milk': '/static/dress/milk sft.jpg',
+                    'yellow': '/static/dress/yellow sft.jpg',
+                    'brown': '/static/dress/brown sft.jpg',
+                },
+                "Sleeveless": {
+                    'black': '/static/dress/black bsl.jpg',
+                    'red': '/static/dress/red bsl.jpg',
+                    'blue': '/static/dress/blue bsl.jpg',
+                    'milk': '/static/dress/milk bsl.jpg',
+                    'yellow': '/static/dress/yellow bsl.jpg',
+                    'brown': '/static/dress/brown bsl.jpg',
+                },
+                "Hooded onesie": {
+                    'black': '/static/dress/black bh.jpg',
+                    'red': '/static/dress/red bh.jpg',
+                    'blue': '/static/dress/blue bh.jpg',
+                    'milk': '/static/dress/milk bh.jpg',
+                    'yellow': '/static/dress/yellow bh.jpg',
+                    'brown': '/static/dress/brown bh.jpg',
+                },
+                "Baby sweat suit": {
+                    'black': '/static/dress/black bss.jpg',
+                    'red': '/static/dress/red bss.jpg',
+                    'blue': '/static/dress/blue bss.jpg',
+                    'milk': '/static/dress/milk bss.jpg',
+                    'yellow': '/static/dress/yellow bss.jpg',
+                    'brown': '/static/dress/brown bss.jpg',
+                },
+                "Cotton jumpsuit": {
+                    'black': '/static/dress/black bj.jpg',
+                    'red': '/static/dress/red bj.jpg',
+                    'blue': '/static/dress/blue bj.jpg',
+                    'milk': '/static/dress/milk bj.jpg',
+                    'yellow': '/static/dress/yellow bj.jpg',
+                    'brown': '/static/dress/brown bj.jpg',
+                }
+            },
+            men: {
+                "Full Hand": {
+                    'black': '/static/dress/black ffb.jpg',
+                    'red': '/static/dress/red ffb.jpg',
+                    'blue': '/static/dress/blue ffb.jpg',
+                    'milk': '/static/dress/milk ffb.jpg',
+                    'yellow': '/static/dress/yellow ffb.jpg',
+                    'brown': '/static/dress/brown ffb.jpg',
+                },
+                "Half Hand": {
+                    'black': '/static/dress/black hfb.jpg',
+                    'red': '/static/dress/red hfb.jpg',
+                    'blue': '/static/dress/blue hfb.jpg',
+                    'milk': '/static/dress/milk hfb.jpg',
+                    'yellow': '/static/dress/yellow hfb.jpg',
+                    'brown': '/static/dress/brown hfb.jpg',
+                },
+                "Casual": {
+                    'black': '/static/dress/black cfb.jpg',
+                    'red': '/static/dress/red cfb.jpg',
+                    'blue': '/static/dress/blue cfb.jpg',
+                    'milk': '/static/dress/milk cfb.jpg',
+                    'yellow': '/static/dress/yellow cfb.jpg',
+                    'brown': '/static/dress/brown cfb.jpg',
+                },
+                "T-Shirt": {
+                    'black': '/static/dress/black p.jpg',
+                    'red': '/static/dress/red p.jpg',
+                    'blue': '/static/dress/blue p.jpg',
+                    'milk': '/static/dress/milk p.jpg',
+                    'yellow': '/static/dress/yellow p.jpg',
+                    'brown': '/static/dress/brown p.jpg',
+                },
+                "Long sleeve": {
+                    'black': '/static/dress/black jfw.jpg',
+                    'red': '/static/dress/red jfw.jpg',
+                    'blue': '/static/dress/blue jfw.jpg',
+                    'milk': '/static/dress/milk jfw.jpg',
+                    'yellow': '/static/dress/yellow jfw.jpg',
+                    'brown': '/static/dress/brown jfw.jpg',
+                }
+            },
+            women: {
+                'Open Front': {
+                    'black': '/static/dress/black of.jpg',
+                    'red': '/static/dress/red of.jpg',
+                    'blue': '/static/dress/blue of.jpg',
+                    'milk': '/static/dress/milk of.jpg',
+                    'yellow': '/static/dress/yellow of.jpg',
+                    'brown': '/static/dress/brown of.jpg',
+                },
+                "Straight": {
+                    'black': '/static/dress/black wps.jpg',
+                    'red': '/static/dress/red ws.jpg',
+                    'blue': '/static/dress/blue ws.jpg',
+                    'milk': '/static/dress/milk ws.jpg',
+                    'yellow': '/static/dress/yellow ws.jpg',
+                    'brown': '/static/dress/brown ws.jpg',
+                },
+                "Skinny": {
+                    'black': '/static/dress/black wps.jpg',
+                    'red': '/static/dress/red wps.jpg',
+                    'blue': '/static/dress/blue wps.jpg',
+                    'milk': '/static/dress/milk wps.jpg',
+                    'yellow': '/static/dress/yellow wps.jpg',
+                    'brown': '/static/dress/brown wps.jpg',
+                },
+                "Wide Leg": {
+                    'black': '/static/dress/black ww.jpg',
+                    'red': '/static/dress/red ww.jpg',
+                    'blue': '/static/dress/blue ww.jpg',
+                    'milk': '/static/dress/milk ww.jpg',
+                    'yellow': '/static/dress/yellow ww.jpg',
+                    'brown': '/static/dress/brown ww.jpg',
+                },
+                "Long sleeve": {
+                    'black': '/static/dress/black jfw.jpg',
+                    'red': '/static/dress/red jfw.jpg',
+                    'blue': '/static/dress/blue jfw.jpg',
+                    'milk': '/static/dress/milk jfw.jpg',
+                    'yellow': '/static/dress/yellow jfw.jpg',
+                    'brown': '/static/dress/brown jfw.jpg',
+                }
+            }
+        };
+        
+        // Enhanced pricing structure with length, design, and type multipliers
+        const dressData = {
+            baby: {
+                'Footed romper': {
+                    baseMultiplier: 0.80,
+                    designs: {
+                        'Full Hand': { multiplier: 1.20, length: 'Long' },
+                        'Half Hand': { multiplier: 1.00, length: 'Medium' },
+                        'Sleeveless': { multiplier: 0.90, length: 'Short' },
+                        'Shorts': { multiplier: 0.70, length: 'Short' }
+                    },
+                    sizes: { 
+                        'small': { multiplier: 0.60, price: 100 }, 
+                        'medium': { multiplier: 0.75, price: 120 }, 
+                        'large': { multiplier: 1.00, price: 150 } 
+                    }
+                },
+                'Snap-up romper': {
+                    baseMultiplier: 0.85,
+                    designs: {
+                        'Full Hand': { multiplier: 1.25, length: 'Long' },
+                        'Half Hand': { multiplier: 1.05, length: 'Medium' },
+                        'Sleeveless': { multiplier: 0.95, length: 'Short' },
+                        'Shorts': { multiplier: 0.75, length: 'Short' }
+                    },
+                    sizes: { 
+                        'small': { multiplier: 0.60, price: 105 }, 
+                        'medium': { multiplier: 0.75, price: 125 }, 
+                        'large': { multiplier: 1.00, price: 160 } 
+                    }
+                },
+                'Hoody': {
+                    baseMultiplier: 1.10,
+                    designs: {
+                        'Hooded onesie': { multiplier: 1.30, length: 'Long' },
+                        'Baby sweat suit': { multiplier: 1.15, length: 'Medium' },
+                        'Cotton jumpsuit': { multiplier: 1.00, length: 'Medium' }
+                    },
+                    sizes: { 
+                        'small': { multiplier: 0.60, price: 110 }, 
+                        'medium': { multiplier: 0.75, price: 135 }, 
+                        'large': { multiplier: 1.00, price: 170 } 
+                    }
+                }
+            },
+            men: {
+                'Pant': {
+                    baseMultiplier: 1.20,
+                    designs: {
+                        'Chinos': { multiplier: 1.10, length: 'Long' },
+                        'Jeans': { multiplier: 1.25, length: 'Long' },
+                        'Shorts': { multiplier: 0.80, length: 'Short' },
+                        'Cargo': { multiplier: 1.15, length: 'Long' }
+                    },
+                    sizes: { 
+                        '28': { multiplier: 0.90, price: 100 }, 
+                        '30': { multiplier: 0.95, price: 105 }, 
+                        '32': { multiplier: 1.00, price: 110 }, 
+                        '34': { multiplier: 1.05, price: 115 }, 
+                        '36': { multiplier: 1.10, price: 120 }, 
+                        '38': { multiplier: 1.15, price: 125 } 
+                    }
+                },
+                'Shirt': {
+                    baseMultiplier: 1.00,
+                    designs: {
+                        'Full Hand': { multiplier: 1.20, length: 'Long' },
+                        'Casual': { multiplier: 1.00, length: 'Medium' },
+                        'Half Hand': { multiplier: 1.10, length: 'Medium' },
+                        'T-Shirt': { multiplier: 0.85, length: 'Short' }
+                    },
+                    sizes: { 
+                        'S': { multiplier: 0.90, price: 100 }, 
+                        'M': { multiplier: 0.95, price: 105 }, 
+                        'L': { multiplier: 1.00, price: 110 }, 
+                        'XL': { multiplier: 1.10, price: 115 } 
+                    }
+                },
+                'Jacket': {
+                    baseMultiplier: 1.50,
+                    designs: {
+                        'Leather': { multiplier: 1.40, length: 'Long' },
+                        'Denim': { multiplier: 1.20, length: 'Medium' },
+                        'Long sleeve': { multiplier: 1.30, length: 'Long' }
+                    },
+                    sizes: { 
+                        'S': { multiplier: 0.90, price: 150 }, 
+                        'M': { multiplier: 0.95, price: 155 }, 
+                        'L': { multiplier: 1.00, price: 160 }, 
+                        'XL': { multiplier: 1.10, price: 165 } 
+                    }
+                }
+            },
+            women: {
+                'Top': {
+                    baseMultiplier: 1.00,
+                    designs: {
+                        'T-Shirt': { multiplier: 0.85, length: 'Short' },
+                        'Blouse': { multiplier: 1.15, length: 'Medium' },
+                        'Tank Top': { multiplier: 0.75, length: 'Short' },
+                        'Hoodie': { multiplier: 1.25, length: 'Long' }
+                    },
+                    sizes: { 
+                        'S': { multiplier: 0.90, price: 100 }, 
+                        'M': { multiplier: 0.95, price: 105 }, 
+                        'L': { multiplier: 1.00, price: 110 }, 
+                        'XL': { multiplier: 1.10, price: 115 } 
+                    }
+                },
+                'Pant': {
+                    baseMultiplier: 1.15,
+                    designs: {
+                        'Straight': { multiplier: 1.00, length: 'Long' },
+                        'Skinny': { multiplier: 1.05, length: 'Long' },
+                        'Wide Leg': { multiplier: 1.20, length: 'Long' },
+                        'Culottes': { multiplier: 1.15, length: 'Medium' }
+                    },
+                    sizes: { 
+                        '28': { multiplier: 0.90, price: 115 }, 
+                        '30': { multiplier: 0.95, price: 120 }, 
+                        '32': { multiplier: 1.00, price: 125 }, 
+                        '34': { multiplier: 1.05, price: 130 }, 
+                        '36': { multiplier: 1.10, price: 135 }, 
+                        '38': { multiplier: 1.15, price: 140 } 
+                    }
+                },
+                'Jacket': {
+                    baseMultiplier: 1.40,
+                    designs: {
+                        'Long sleeve': { multiplier: 1.30, length: 'Long' },
+                        'Short Sleeve': { multiplier: 1.10, length: 'Medium' },
+                        'Open Front': { multiplier: 1.20, length: 'Medium' }
+                    },
+                    sizes: { 
+                        'S': { multiplier: 0.90, price: 140 }, 
+                        'M': { multiplier: 0.95, price: 145 }, 
+                        'L': { multiplier: 1.00, price: 150 }, 
+                        'XL': { multiplier: 1.10, price: 155 } 
+                    }
+                }
+            }
+        };
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateEditForm();
+        });
+
+        // Toggle edit form visibility
+        function editOption() {
+            const editForm = document.getElementById('edit-form');
+            editForm.style.display = editForm.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Populate edit form with current values
+        function populateEditForm() {
+            const dressType = '{{ dress_type }}';
+            const dressDesign = '{{ dress_design }}';
+            const size = '{{ size }}';
+            const quantity = '{{ quantity }}';
+
+            // Populate dress type dropdown
+            const dressTypeSelect = document.getElementById('edit-dress-type');
+            dressTypeSelect.innerHTML = '<option value="">Select Dress Type</option>';
+            
+            for (const type in dressData[gender]) {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                if (type === dressType) option.selected = true;
+                dressTypeSelect.appendChild(option);
+            }
+
+            // Update dependent dropdowns
+            updateDesignOptions();
+            
+            // Set initial values
+            document.getElementById('edit-quantity').value = quantity;
+        }
+
+        // Update design options based on selected dress type
+        function updateDesignOptions() {
+            const dressType = document.getElementById('edit-dress-type').value;
+            const dressDesignSelect = document.getElementById('edit-dress-design');
+            const sizeSelect = document.getElementById('edit-size');
+            
+            // Reset and populate design dropdown
+            dressDesignSelect.innerHTML = '<option value="">Select Dress Design</option>';
+            if (dressType && dressData[gender][dressType]) {
+                const currentDesign = '{{ dress_design }}';
+                Object.keys(dressData[gender][dressType].designs).forEach(design => {
+                    const option = document.createElement('option');
+                    option.value = design;
+                    option.textContent = design;
+                    if (design === currentDesign) option.selected = true;
+                    dressDesignSelect.appendChild(option);
+                });
+            }
+            
+            // Reset and populate size dropdown
+            sizeSelect.innerHTML = '<option value="">Select Size</option>';
+            if (dressType && dressData[gender][dressType]) {
+                const currentSize = '{{ size }}';
+                for (const size in dressData[gender][dressType].sizes) {
+                    const option = document.createElement('option');
+                    option.value = size;
+                    option.textContent = size;
+                    if (size === currentSize) option.selected = true;
+                    sizeSelect.appendChild(option);
+                }
+            }
+            
+            // Update preview with current selections
+            updatePreview();
+        }
+
+        // Update all preview elements (price, image, etc.)
+        function updatePreview() {
+            updatePrice();
+            updateImage();
+        }
+
+        // Update price display with enhanced pricing
+        function updatePrice() {
+            const dressType = document.getElementById('edit-dress-type').value;
+            const dressDesign = document.getElementById('edit-dress-design').value;
+            const size = document.getElementById('edit-size').value;
+            const quantity = document.getElementById('edit-quantity').value || 1;
+            
+            if (dressType && dressDesign && size && dressData[gender][dressType] && 
+                dressData[gender][dressType].designs[dressDesign] && 
+                dressData[gender][dressType].sizes[size]) {
+                
+                const typeData = dressData[gender][dressType];
+                const designData = typeData.designs[dressDesign];
+                const sizeData = typeData.sizes[size];
+                
+                // Calculate price with all multipliers and 50% markup
+                const typeMultiplier = typeData.baseMultiplier;
+                const designMultiplier = designData.multiplier;
+                const sizeMultiplier = sizeData.multiplier;
+                
+                const finalPrice = dressPrice * typeMultiplier * designMultiplier * sizeMultiplier * markup;
+                const totalPrice = (finalPrice * quantity).toFixed(2);
+                
+                document.getElementById('total-price').textContent = `₹${totalPrice}`;
+            }
+        }
+
+        // Update image preview
+        function updateImage() {
+            const dressDesign = document.getElementById('edit-dress-design').value;
+            
+            if (dressDesign && imageUrlMap[gender] && imageUrlMap[gender][dressDesign] && imageUrlMap[gender][dressDesign][color]) {
+                const newImageUrl = imageUrlMap[gender][dressDesign][color];
+                document.getElementById('dress-image').src = newImageUrl;
+            }
+        }
+
+        // Save changes and update display
+        function saveChanges() {
+            const dressType = document.getElementById('edit-dress-type').value;
+            const dressDesign = document.getElementById('edit-dress-design').value;
+            const size = document.getElementById('edit-size').value;
+            const quantity = document.getElementById('edit-quantity').value;
+            
+            // Update hidden form fields
+            document.getElementById('hidden-dress-type').value = dressType;
+            document.getElementById('hidden-dress-design').value = dressDesign;
+            document.getElementById('hidden-size').value = size;
+            document.getElementById('hidden-quantity').value = quantity;
+            
+            // Update displayed values
+            document.getElementById('dress-type-display').textContent = dressType || 'Not Selected';
+            document.getElementById('dress-design-display').textContent = dressDesign || 'Not Selected';
+            document.getElementById('size-display').textContent = size || 'Not Selected';
+            document.getElementById('quantity-display').textContent = quantity;
+            
+            // Hide edit form
+            editOption();
+        }
+
+        // Cancel editing and hide form
+        function cancelEdit() {
+            editOption();
+        }
+
+        function updateTotalPrice() {
+            const gender = '{{ gender }}';
+            const dressTypeSelect = document.getElementById('edit-dress-type');
+            const sizeSelect = document.getElementById('edit-size');
+            const quantitySelect = document.getElementById('edit-quantity');
+
+            const selectedType = dressTypeSelect.value;
+            const selectedSize = sizeSelect.value;
+            const quantity = quantitySelect.value;
+
+            if (selectedType && selectedSize) {
+                const price = dressData[gender][selectedType].sizes[selectedSize].price * quantity;
+                document.querySelector('.total-price').innerHTML = `<strong>Total Price:</strong> ₹<span id="total-price">${price}</span>`;
+                document.getElementById('hidden-dress-type').value = selectedType;
+                document.getElementById('hidden-size').value = selectedSize;
+                document.getElementById('hidden-quantity').value = quantity;
+
+                // Update displayed details dynamically
+                document.getElementById('dress-type-display').innerText = selectedType;
+                document.getElementById('dress-design-display').innerText = document.getElementById('edit-dress-design').value || 'Not Selected';
+                document.getElementById('size-display').innerText = selectedSize || 'Not Selected';
+                document.getElementById('quantity-display').innerText = quantity;
+            }
+        }
+    </script>
+</body>
+</html>
