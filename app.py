@@ -481,6 +481,6 @@ def order_success():
     user = order.get('user_details', {})
     dress_details = order.get('dress_details', {})
     return render_template('order_success.html', order=order, user=user, dress_details=dress_details)
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080, debug=True)
-    app.run(host="0.0.0.0", port=8080, debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
